@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const Contact = (props) => {
     document.title = "Contact Me - iCoder"
@@ -9,17 +9,35 @@ const Contact = (props) => {
         setContact(contact => ({...contact, [e.target.name]: `${e.target.value}`}))
     }
 
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     const handleSubmit = async () => {
         const response = await fetch('/api/contact', {
             method: "POST",
             headers: {
                 "Content-type": "application/json",
+                'X-CSRFToken': getCookie('csrftoken')
             },
             body: JSON.stringify(contact)
         })
         let data = await response.json()
         props.showAlert(`${data.message}`, `${data.msg_category}`)
         document.getElementById("contact-form").reset();
+        setContact({ name: "", email: "", phone: "", message: "" })
     }
 
     return (

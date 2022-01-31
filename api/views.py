@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import ContactSerializer, PostSerializer
 from .models import Post
-from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 @api_view(['GET'])
@@ -55,7 +54,6 @@ def search(request):
     serializer = PostSerializer(posts, many=True)
     return Response({'posts': serializer.data})
 
-@csrf_exempt
 @api_view(['POST'])
 def contact(request):
     serializer = ContactSerializer(data=request.data)
